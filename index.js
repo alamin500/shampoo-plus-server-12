@@ -5,6 +5,7 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
 
+const ObjectId = require("mongodb").ObjectId;
 app.use(cors());
 app.use(express.json());
 // const uri =
@@ -70,8 +71,9 @@ client.connect((err) => {
   });
 
 
-  // Get My books
+  // Get My orders
   app.get('/myOrder/:email', async (req, res) => {
+    console.log(req.params.email)
     const result = await OrdersCollection.find({
       email: req.params.email,
     }).toArray();
@@ -80,6 +82,7 @@ client.connect((err) => {
 
   // Get All Books
   app.get('/allOrders', async (req, res) => {
+
     const result = await OrdersCollection.find({}).toArray();
     res.send(result);
   });
@@ -92,15 +95,16 @@ client.connect((err) => {
   });
 
   // Make Admin
+
   app.put('/makeAdmin', async (req, res) => {
     console.log(req.body.email);
     const filter = { email: req.body.email };
-    const result = await usersCollection.find(filter).toArray();
+    const result = await usersCollection.find(filter);
     if (result) {
       const updates = await usersCollection.updateOne(filter, {
         $set: { role: 'admin' },
       });
-      console.log(updates);
+      console.log('admin',updates);
     }
   });
 
@@ -117,10 +121,25 @@ client.connect((err) => {
   app.delete('/deleteProducts/:id', async (req, res) => {
     console.log(req.params.id);
     const result = await shampooCollection.deleteOne({
-      _id: ObjectId(req.params.id),
+       _id: ObjectId(req.params.id) ,
     });
     res.send(result);
   });
+
+// status update
+  app.put("/statusUpdate/:id", async (req, res) => {
+    console.log(req.params.id)
+    const filter = { _id: req.params.id };
+
+    const result = await OrdersCollection.updateOne(filter, {
+      $set: {
+        status: req.body,
+      },
+    });
+    res.send(result);
+    console.log(result);
+  });
+
 
   // Get Products
   app.get('/products', async (req, res) => {
