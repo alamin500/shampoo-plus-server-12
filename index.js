@@ -71,6 +71,15 @@ client.connect((err) => {
   });
 
 
+  // Get Admin
+  app.get('/admin/:email', async (req, res) => {
+    console.log(req.params.email)
+    const result = await usersCollection.find({
+      email: req.params.email,
+    }).toArray();
+    res.send(result);
+  });
+
   // Get My orders
   app.get('/myOrder/:email', async (req, res) => {
     console.log(req.params.email)
@@ -100,6 +109,7 @@ client.connect((err) => {
     console.log(req.body.email);
     const filter = { email: req.body.email };
     const result = await usersCollection.find(filter);
+    console.log(result)
     if (result) {
       const updates = await usersCollection.updateOne(filter, {
         $set: { role: 'admin' },
@@ -128,7 +138,7 @@ client.connect((err) => {
 
 // status update
   app.put("/statusUpdate/:id", async (req, res) => {
-    console.log(req.params.id)
+    console.log(req.body)
     const filter = { _id: req.params.id };
 
     const result = await OrdersCollection.updateOne(filter, {
