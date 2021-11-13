@@ -8,6 +8,7 @@ const port = process.env.PORT || 5000;
 const ObjectId = require("mongodb").ObjectId;
 app.use(cors());
 app.use(express.json());
+
 // const uri =
 //   "mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.2vil1.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 // const client = new MongoClient(uri, {
@@ -21,10 +22,8 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
 });
 
-console.log(uri);
 app.get('/', (req, res) => {
   res.send('Welcome our Shampoo Plus Website!');
-  console.log(req);
 });
 client.connect((err) => {
   const shampooCollection = client
@@ -45,9 +44,7 @@ client.connect((err) => {
 
   // Add Reviews
   app.post('/addReview', async (req, res) => {
-    console.log(req.body);
     const result = await ReviewCollection.insertOne(req.body);
-    console.log(result);
   });
 
   // Get Reviews
@@ -60,6 +57,7 @@ client.connect((err) => {
   app.post('/order', async (req, res) => {
     const result = await OrdersCollection.insertOne(req.body);
   });
+
   //put/update
   app.put('/users', async (req, res) => {
     const result = await usersCollection.updateOne(
@@ -70,10 +68,8 @@ client.connect((err) => {
     res.send(result);
   });
 
-
   // Get Admin
   app.get('/admin/:email', async (req, res) => {
-    console.log(req.params.email)
     const result = await usersCollection.find({
       email: req.params.email,
     }).toArray();
@@ -82,7 +78,6 @@ client.connect((err) => {
 
   // Get My orders
   app.get('/myOrder/:email', async (req, res) => {
-    console.log(req.params.email)
     const result = await OrdersCollection.find({
       email: req.params.email,
     }).toArray();
@@ -95,32 +90,27 @@ client.connect((err) => {
     const result = await OrdersCollection.find({}).toArray();
     res.send(result);
   });
+
   // Add user
   app.post('/users', async (req, res) => {
-    console.log('req.body');
     const result = await usersCollection.insertOne(req.body);
     res.send(result);
-    console.log(result);
   });
 
   // Make Admin
 
   app.put('/makeAdmin', async (req, res) => {
-    console.log(req.body.email);
     const filter = { email: req.body.email };
     const result = await usersCollection.find(filter);
-    console.log(result)
     if (result) {
       const updates = await usersCollection.updateOne(filter, {
         $set: { role: 'admin' },
       });
-      console.log('admin',updates);
     }
   });
 
   // Delete MyBook
   app.delete('/deleteOrder/:id', async (req, res) => {
-    console.log(req.params.id);
     const result = await OrdersCollection.deleteOne({
       _id: req.params.id,
     });
@@ -129,25 +119,21 @@ client.connect((err) => {
 
   // Delete Product
   app.delete('/deleteProducts/:id', async (req, res) => {
-    console.log(req.params.id);
     const result = await shampooCollection.deleteOne({
        _id: ObjectId(req.params.id) ,
     });
     res.send(result);
   });
 
-// status update
+//Update Status
   app.put("/statusUpdate/:id", async (req, res) => {
-    console.log(req.body)
     const filter = { _id: req.params.id };
-
     const result = await OrdersCollection.updateOne(filter, {
       $set: {
         status: req.body,
       },
     });
     res.send(result);
-    console.log(result);
   });
 
 
