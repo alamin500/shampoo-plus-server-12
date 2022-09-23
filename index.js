@@ -26,13 +26,13 @@ app.get('/', (req, res) => {
   res.send('Welcome our Shampoo Plus Website!');
 });
 client.connect((err) => {
-  const shampooCollection = client.db('shampooPlusWebsite').collection('shampoo');
+  const shampooCollection = client.db('tazaFish').collection('shampoo');
 
-  const OrdersCollection = client.db('shampooPlusWebsite').collection('orders');
+  const OrdersCollection = client.db('tazaFish').collection('orders');
 
-  const ReviewCollection = client.db('shampooPlusWebsite').collection('review');
+  const ReviewCollection = client.db('tazaFish').collection('review');
 
-  const usersCollection = client.db('shampooPlusWebsite').collection('users');
+  const usersCollection = client.db('tazaFish').collection('users');
   // perform actions on the collection object
 
   // Add Product
